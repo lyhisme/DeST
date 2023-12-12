@@ -125,7 +125,7 @@ If you find our repo useful for your research, please consider citing our paper:
 
 ```bibtex
 @article{DeST,
-  title={A Decoupled Spatio-Temporal Framework for <br>Skeleton-based Action Segmentation},
+  title={A Decoupled Spatio-Temporal Framework for Skeleton-based Action Segmentation},
   author={Yunheng Li, Zhongyu Li, Shanghua Gao, Qilong Wang, Qibin Hou, Ming-Ming Cheng},
   journal={arXiv preprint arXiv:2312.05830},
   year={2023}
