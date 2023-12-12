@@ -1,0 +1,50 @@
+dataset: LARA
+dataset_dir: ./dataset
+csv_dir: ./csv
+
+batch_size: 8
+boundary_th: 0.5
+ce: true
+ce_weight: 1.0
+class_weight: False
+
+focal: false
+focal_weight: 1.0
+gstmse: true
+gstmse_index: feature
+gstmse_weight: 1.0
+lambda_b: 0.1
+learning_rate: 0.001
+optimizer: Adam
+momentum: 0.9
+dampening: 0.0
+weight_decay: 0.0001
+nesterov: true
+tmse: false
+tmse_weight: 0.15
+tolerance: 5
+
+model: libs.models.DeST_tcn.Model  
+in_channel: 12
+n_features: 64
+n_layers: 10
+n_stages: 4
+n_stages_asb: 2
+n_stages_brb: 3
+SFI_layer: [1, 2 ,3, 4, 5, 6, 7, 8, 9]
+
+max_epoch: 100
+num_workers: 4
+iou_thresholds:
+- 0.1
+- 0.25
+- 0.5
+- 0.75
+- 0.9
+
+split: 1
+device: 0
+param_search: True
+refinement_method: refinement_with_boundary
+
+result_path: ./result
