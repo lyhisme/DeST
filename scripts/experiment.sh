@@ -9,59 +9,20 @@ python utils/generate_boundary_array.py --dataset_dir [DATASET_DIR]
 python utils/make_csv_files.py --dataset_dir [DATASET_DIR]
 
 # make configuration files
-python utils/make_config.py --root_dir ./result/50salads --dataset 50salads --split 1 2 3 4 5
-python utils/make_config.py --root_dir ./result/gtea --dataset gtea --split 1 2 3 4
-python utils/make_config.py --root_dir ./result/breakfast --dataset breakfast --split 1 2 3 4
+python utils/make_config.py --root_dir ./config/DeST_linearformer/MCFS-130 --dataset MCFS-130 --split 1
 
-# 50salads dataset
+# MCFS-130 dataset
 # training
-python train.py ./result/50salads/dataset-50salads_split-1/config.yaml
-python train.py ./result/50salads/dataset-50salads_split-2/config.yaml
-python train.py ./result/50salads/dataset-50salads_split-3/config.yaml
-python train.py ./result/50salads/dataset-50salads_split-4/config.yaml
-python train.py ./result/50salads/dataset-50salads_split-5/config.yaml
+python train.py ./config/DeST_linearformer/MCFS-130/config.yaml
 
 # test
-python evaluate.py ./result/50salads/dataset-50salads_split-1/config.yaml test --refinement_method refinement_with_boundary
-python evaluate.py ./result/50salads/dataset-50salads_split-2/config.yaml test --refinement_method refinement_with_boundary
-python evaluate.py ./result/50salads/dataset-50salads_split-3/config.yaml test --refinement_method refinement_with_boundary
-python evaluate.py ./result/50salads/dataset-50salads_split-4/config.yaml test --refinement_method refinement_with_boundary
-python evaluate.py ./result/50salads/dataset-50salads_split-5/config.yaml test --refinement_method refinement_with_boundary
-
-# gtea dataset
-# training
-python train.py ./result/gtea/dataset-gtea_split-1/config.yaml
-python train.py ./result/gtea/dataset-gtea_split-2/config.yaml
-python train.py ./result/gtea/dataset-gtea_split-3/config.yaml
-python train.py ./result/gtea/dataset-gtea_split-4/config.yaml
-
-# test
-python evaluate.py ./result/gtea/dataset-gtea_split-1/config.yaml test --refinement_method refinement_with_boundary
-python evaluate.py ./result/gtea/dataset-gtea_split-2/config.yaml test --refinement_method refinement_with_boundary
-python evaluate.py ./result/gtea/dataset-gtea_split-3/config.yaml test --refinement_method refinement_with_boundary
-python evaluate.py ./result/gtea/dataset-gtea_split-4/config.yaml test --refinement_method refinement_with_boundary
-
-# breakfast dataset
-# training
-python train.py ./result/breakfast/dataset-breakfast_split-1/config.yaml
-python train.py ./result/breakfast/dataset-breakfast_split-2/config.yaml
-python train.py ./result/breakfast/dataset-breakfast_split-3/config.yaml
-python train.py ./result/breakfast/dataset-breakfast_split-4/config.yaml
-
-# test
-python evaluate.py ./result/breakfast/dataset-breakfast_split-1/config.yaml test --refinement_method refinement_with_boundary
-python evaluate.py ./result/breakfast/dataset-breakfast_split-2/config.yaml test --refinement_method refinement_with_boundary
-python evaluate.py ./result/breakfast/dataset-breakfast_split-3/config.yaml test --refinement_method refinement_with_boundary
-python evaluate.py ./result/breakfast/dataset-breakfast_split-4/config.yaml test --refinement_method refinement_with_boundary
+python evaluate.py ./config/DeST_linearformer/MCFS-130/config.yaml
 
 # average cross validation results.
-python utils/average_cv_results.py ./result/50salads
-python utils/average_cv_results.py ./result/gtea
-python utils/average_cv_results.py ./result/breakfast
+python utils/average_cv_results.py ./result/MCFS-130/DeST_linearformer
 
 # output visualization
 # save outputs as np.array
-python save_pred.py ./result/50salads/dataset-50salads_split1/config.yaml test --refinement_method refinement_with_boundary
-
+python save_pred.py ./config/DeST_linearformer/MCFS-130/config.yaml
 # convert array to image
-python utils/convert_arr2img.py ./result/50salads/dataset-50salads_split1/predictions
+python utils/convert_arr2img.py ./result/MCFS-130/DeST_linearformer/split1/predictions

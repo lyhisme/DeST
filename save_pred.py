@@ -14,6 +14,7 @@ from libs.config import get_config
 from libs.dataset import ActionSegmentationDataset, collate_fn
 from libs.postprocess import PostProcessor
 from libs.transformer import TempDownSamp, ToTensor
+import sys
 
 
 def get_arguments() -> argparse.Namespace:
@@ -36,6 +37,13 @@ def get_arguments() -> argparse.Namespace:
 
     return parser.parse_args()
 
+def import_class(import_str):
+    mod_str, _sep, class_str = import_str.rpartition('.')
+    __import__(mod_str)
+    try:
+        return getattr(sys.modules[mod_str], class_str)
+    except AttributeError:
+        raise ImportError('Class %s cannot be found (%s)' % (class_str, traceback.format_exception(*sys.exc_info())))
 
 def predict(
     loader: DataLoader,
@@ -58,16 +66,18 @@ def predict(
             t = sample["label"]
             path = sample["feature_path"][0]
             name = os.path.basename(path)
-            mask = sample["mask"].numpy()
+            mask = sample["mask"]
 
             x = x.to(device)
+            mask = mask.to(device)
 
             # compute output and loss
-            output_cls, output_bound = model(x)
+            output_cls, output_bound = model(x, mask)
 
             # calcualte accuracy and f1 score
             output_cls = output_cls.to("cpu").data.numpy()
             output_bound = output_bound.to("cpu").data.numpy()
+            mask = mask.to("cpu").data.numpy()
 
             refined_pred = postprocessor(
                 output_cls, boundaries=output_bound, masks=mask
@@ -101,7 +111,7 @@ def main():
 
     # configuration
     config = get_config(args.config)
-    result_path = os.path.dirname(args.config)
+    result_path =  os.path.join(config.result_path, config.dataset, config.model.split('.')[-2], 'split' + str(config.split))
 
     # cpu or gpu
     if args.cpu:
@@ -133,22 +143,26 @@ def main():
 
     n_classes = get_n_classes(config.dataset, dataset_dir=config.dataset_dir)
 
-    model = models.ActionSegmentRefinementFramework(
+    Model = import_class(config.model)
+    model = Model(
         in_channel=config.in_channel,
         n_features=config.n_features,
         n_classes=n_classes,
         n_stages=config.n_stages,
         n_layers=config.n_layers,
+        n_refine_layers=config.n_refine_layers,
         n_stages_asb=config.n_stages_asb,
         n_stages_brb=config.n_stages_brb,
+        SFI_layer=config.SFI_layer,
+        dataset=config.dataset,
     )
 
     # send the model to cuda/cpu
     model.to(device)
 
     # load the state dict of the model
-    state_dict_cls = torch.load(os.path.join(result_path, "final_model.prm"))
-    model.load_state_dict(state_dict_cls)
+    state_dict_cls = torch.load(os.path.join(result_path, "best_test_model.prm"))
+    model.load_state_dict(state_dict_cls, False)
 
     # save outputs
     predict(loader, model, device, result_path, config.boundary_th)
